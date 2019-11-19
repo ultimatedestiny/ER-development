@@ -77,17 +77,18 @@ def sent_token(sentence_tokenized):
         feed = sentence_tokenized[i]
         feed2 = TR1.tr1(feed)
         print("\n")
-        entity = sentence_structure_determine(feed2)
-        attr4 = TR4.tr4(feed2)
-        attr5 = TR5.tr5(feed2)
-        attr6 = TR6.tr6(feed2)
-        attr7 = TR7.tr7(feed2)
-        attr8 = TR8.tr8(feed2)
-        attr9 = TR9.tr9(feed2)
-        attr47 = TR47.tr47(feed2)
-        attr48 = TR48.tr48(feed2)
-        attr52_53 = TR52_53.tr52_53(feed2)
+        entity,POS = sentence_structure_determine(feed2)
+        attr4 = TR4.tr4(feed2,POS)
+        attr5 = TR5.tr5(feed2,POS)
+        attr6 = TR6.tr6(feed2,POS)
+        attr7 = TR7.tr7(feed2,POS)
+        attr8 = TR8.tr8(feed2,POS)
+        attr9 = TR9.tr9(feed2,POS)
+        attr47 = TR47.tr47(feed2,POS)
+        attr48 = TR48.tr48(feed2,POS)
+        attr52_53 = TR52_53.tr52_53(feed2,POS)
         finalgraph.draw(entity,attr4,attr5,attr6,attr7,attr8,attr9,attr47,attr48,attr52_53,para_length)
+        #finalgraph.draw(entity,attr4,attr5,attr8,attr9,attr47,attr48,attr52_53,para_length)
 
 
 #PROCEDURE FOR PARsSING AND GENERATION OF LIST OF LISTS.
@@ -196,7 +197,7 @@ def sentence_structure_determine(sentence):
                                                     o.append(entity_1)
                                                     o.append(entity_2)
                                                     o.append(relationship)
-                                                    return o
+                                                    return o,tagged
                                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                                     #transform.SVDOThatClause(entity_1, entity_2, entity_1_attr1, relationship)
                                                     goto(791)
@@ -210,7 +211,7 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o
+                                    return o,tagged
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVThatClause(entity_1, entity_2, relationship)
                                     goto(791)
@@ -237,7 +238,7 @@ def sentence_structure_determine(sentence):
                                                     o.append(entity_1)
                                                     o.append(entity_2)
                                                     o.append(relationship)
-                                                    return o
+                                                    return o,tagged
                                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                                     #transform.SVDOConjClause(entity_1, entity_2, relationship)
                                                     goto(791)
@@ -258,7 +259,7 @@ def sentence_structure_determine(sentence):
                                         o.append(entity_1)
                                         o.append(entity_2)
                                         o.append(relationship)
-                                        return o
+                                        return o,tagged
                                         #entity_matrix.append(entity_1,entity_2,relationship)
                                         #transform.SVDOPresentPart(entity_1, entity_2, relationship)
                                         goto(791)
@@ -281,7 +282,7 @@ def sentence_structure_determine(sentence):
                                         o.append(entity_1)
                                         o.append(entity_2)
                                         o.append(relationship)
-                                        return o
+                                        return o,tagged
                                         #entity_matrix.append(entity_1,entity_2,relationship)
                                         #transform.SVDOAdj(entity_1, entity_2, relationship)
                                         goto(791)
@@ -296,7 +297,7 @@ def sentence_structure_determine(sentence):
                                         o.append(entity_1)
                                         o.append(entity_2)
                                         o.append(relationship)
-                                        return o
+                                        return o,tagged
                                         #entity_matrix.append(entity_1,entity_2,relationship)
                                         #transform.SVDONoun(entity_1, entity_2, relationship)
                                         goto(791)
@@ -332,7 +333,7 @@ def sentence_structure_determine(sentence):
                                                     o.append(entity_1)
                                                     o.append(entity_2)
                                                     o.append(relationship)
-                                                    return o
+                                                    return o,tagged
                                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                                     #transform.SVDONotToInf(entity_1, entity_2, relationship)
                                                     goto(791)
@@ -346,7 +347,7 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o
+                                            return o,tagged
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVNotToInf(entity_1, entity_2, relationship)
                                             goto(791)
@@ -360,7 +361,7 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o
+                                    return o,tagged
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVToInf(entity_1, entity_2, relationship)
                                     goto(791)
@@ -382,7 +383,7 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o
+                                            return o,tagged
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVDOtobeComp(entity_1, entity_2, relationship)
                                             goto(791)
@@ -400,7 +401,7 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o
+                                            return o,tagged
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVDOConjToInf(entity_1, entity_2, relationship)
                                             goto(791)
@@ -414,7 +415,7 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o
+                                    return o,tagged
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVDOToInf(entity_1, entity_2, relationship)
                                     goto(791)
@@ -432,7 +433,7 @@ def sentence_structure_determine(sentence):
                             o.append(entity_1)
                             o.append(entity_2)
                             o.append(relationship)
-                            return o
+                            return o,tagged
                             #entity_matrix.append(entity_1,entity_2,relationship)
                             #transform.SVGerund(entity_1, entity_2, relationship)
                             goto(791)
@@ -450,7 +451,7 @@ def sentence_structure_determine(sentence):
                             o.append(entity_1)
                             o.append(entity_2)
                             o.append(relationship)
-                            return o
+                            return o,tagged
                             #entity_matrix.append(entity_1,entity_2,relationship)
                             #transform.SVIODO(entity_1, entity_2, relationship)
                             goto(791)
@@ -468,7 +469,7 @@ def sentence_structure_determine(sentence):
                             o.append(entity_1)
                             o.append(entity_2)
                             o.append(relationship)
-                            return o
+                            return o,tagged
                             #entity_matrix.append(entity_1,entity_2,relationship)
                             #transform.SVDOAdverbial(entity_1, entity_2, relationship)
                             goto(791)
@@ -494,7 +495,7 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o
+                                            return o,tagged
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVDOPastPart(entity_1, entity_2, relationship)
                                             goto(791)
@@ -511,7 +512,7 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o
+                                    return o,tagged
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVDOPO(entity_1, entity_2, relationship)
                                     goto(791)
@@ -533,7 +534,7 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o
+                                    return o,tagged
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVDO(entity_1, entity_2, relationship)
                                     print(sentence_structure)
@@ -552,7 +553,7 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o
+                                    return o,tagged
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SAuxVDO(entity_1, entity_2, relationship)
                                     goto(791)
@@ -578,7 +579,7 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o
+                                    return o,tagged
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVConjToInf(entity_1, entity_2, relationship)
                                     goto(791)
@@ -600,7 +601,7 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o
+                                            return o,tagged
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVConjClause(entity_1, entity_2, relationship)
                                             goto(791)
@@ -622,7 +623,7 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o
+                                    return o,tagged
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVAdverbialAdjunct(entity_1, entity_2, relationship)
                                     goto(791)
@@ -655,7 +656,7 @@ def sentence_structure_determine(sentence):
                                 o.append(entity_1)
                                 o.append(entity_2)
                                 o.append(relationship)
-                                return o
+                                return o,tagged
                                 #entity_matrix.append(entity_1,entity_2,relationship)
                                 #transform.SVPredicative(entity_1, entity_1_attr1, relationship)
                                 goto(791)
@@ -670,7 +671,7 @@ def sentence_structure_determine(sentence):
                                 o.append(entity_1)
                                 o.append(entity_2)
                                 o.append(relationship)
-                                return o
+                                return o,tagged
                                 #entity_matrix.append(entity_1,entity_2,relationship)
                                 #transform.SVPredicative(entity_1, entity_2, relationship)
                                 goto(791)
@@ -699,7 +700,7 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o
+                                    return o,tagged
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVForComp(entity_1, entity_2, relationship)
                                     goto(791)
@@ -713,7 +714,7 @@ def sentence_structure_determine(sentence):
                             o.append(entity_1)
                             o.append(entity_2)
                             o.append(relationship)
-                            return o
+                            return o,tagged
                             #entity_matrix.append(entity_1,entity_2,relationship)
                             #transform.SVPO(entity_1, entity_2, relationship)
                             goto(791)
@@ -730,7 +731,7 @@ def sentence_structure_determine(sentence):
             o.append(entity_1)
             o.append(entity_2)
             o.append(relationship)
-            return o
+            return o,tagged
             #entity_matrix.append(entity_1,entity_2,relationship)
             #transform.SV(entity_1, entity_2, relationship)
             goto(791)
@@ -768,7 +769,7 @@ def sentence_structure_determine(sentence):
                                                     o.append(entity_1)
                                                     o.append(entity_2)
                                                     o.append(relationship)
-                                                    return o
+                                                    return o,tagged
                                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                                     #transform.SAuxVPassPO(entity_1, entity_2, relationship)
                                                     goto(791)
@@ -782,7 +783,7 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o
+                                            return o,tagged
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVPassPO(entity_1, entity_2, relationship)
                                             goto(791)

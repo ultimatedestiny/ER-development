@@ -1,12 +1,13 @@
 from stanfordcorenlp import StanfordCoreNLP
 
-def tr8(sen):
-    nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
+def tr8(sen,POS):
+    #nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
 
     #sen = "The system prompts for customer’s address."
 
-    pos = nlp.pos_tag(sen)
-    nlp.close()
+    pos = POS
+    #pos = nlp.pos_tag(sen)
+    #nlp.close()
     pos_2 = [list(tup) for tup in pos]
     
     o=[]
@@ -25,7 +26,11 @@ def tr8(sen):
         if pos_2[i][1]=="POS":
             attribute_list.append([pos_2[i-1][0],pos_2[i+1][0]])
 
+    print("")
+    print("OUTPUT OF TR8")
     print(attribute_list)
+    print("")
+    print("")
     return attribute_list
         
 #tr8("The system prompts for customer’s address.")

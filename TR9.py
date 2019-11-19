@@ -1,6 +1,6 @@
 from stanfordcorenlp import StanfordCoreNLP
 
-def tr9(sen):
+def tr9(sen,POS):
     nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
 
     #sen = "The system informs the interested user"
@@ -32,8 +32,12 @@ def tr9(sen):
     nlp.close()
     if count==0:
         attribute_list = []
+    
+    print("")
+    print("OUTPUT OF TR9")
     print(attribute_list)  
-        
+    print("")
+    print("")    
     return attribute_list
 
 #tr9("The system informs the interested user.")

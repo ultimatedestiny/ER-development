@@ -6,7 +6,6 @@ global l
 global call
 global l_second
 global para_length
-#dot = Digraph(comment='sentence structure')
 
 call = 0
 para_length = 0

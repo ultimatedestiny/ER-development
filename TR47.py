@@ -1,11 +1,12 @@
 from stanfordcorenlp import StanfordCoreNLP
 
-def tr47(sen):
-    nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
+def tr47(sen,POS):
+    #nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
 
     #sen = "The withdrawl, deposit, transfer, query are types of transactions."
 
-    pos = nlp.pos_tag(sen)
+    pos = POS
+    #pos = nlp.pos_tag(sen)
 
     #print(pos)
 
@@ -49,8 +50,12 @@ def tr47(sen):
             if (pos_2[i][1].startswith("NN")):
                 m.append(pos_2[i][0])
 
+        print("")
+        print("OUTPUT OF TR47")
         print(m)
-    nlp.close()
+        print("")
+        print("")
+    #nlp.close()
     return m
 
 #tr47("The withdrawl, deposit, transfer, query are types of transactions.")

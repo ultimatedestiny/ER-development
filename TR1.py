@@ -99,8 +99,11 @@ def tr1(sentence):
         if "x" in l:
             l.remove("x")
 
+    print("")
+    print("OUTPUT OF TR1:")
     print(l)
-
+    print("")
+    print("")
 
     k=None
     for i in range(len(l)):

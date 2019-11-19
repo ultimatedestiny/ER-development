@@ -1,6 +1,6 @@
 from stanfordcorenlp import StanfordCoreNLP
 
-def tr7(sen):
+def tr7(sen,POS):
 
     nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
 

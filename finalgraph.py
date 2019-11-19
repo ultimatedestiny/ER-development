@@ -26,6 +26,8 @@ def goto(lineno):
         frame = frame.f_back
     sys.settrace(hook)
 
+#def draw(entity,attr1,attr2,attr3,attr4,attr5,attr8,attr9,para):
+
 def draw(entity,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8,attr9,para):
     #cou = count
     global l
@@ -115,8 +117,8 @@ def draw(entity,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8,attr9,para):
 
 
 #print(l)
-draw(['customer','withdrawal','carries'],['withdrawal','amount'],['withdrawal','date'],['withdrawal','time'],[],[],[],['withdrawal','type'],[],[],2)
-draw(['system','user','warns'],['system','id'],['system','modelname','modelnumber'],['system','make'],[],[],[],[],[],[],2)
+#draw(['customer','withdrawal','carries'],['withdrawal','amount'],['withdrawal','date'],['withdrawal','time'],[],[],[],['withdrawal','type'],[],[],2)
+#draw(['system','user','warns'],['system','id'],['system','modelname','modelnumber'],['system','make'],[],[],[],[],[],[],2)
 
 #draw(['customer','withdrawal','carries'],[],[],[],[],[],[],[],[],[],2)
 #draw(['system','user','warns'],[],[],[],[],[],[],[],[],[],2)
@@ -128,6 +130,16 @@ draw(['system','user','warns'],['system','id'],['system','modelname','modelnumbe
 
 #draw(['Institute','Student','admits'],['Student','Name','Address','Roll_no'],[],[],[],[],[],[],[],[],5)
 #draw(['Institute','Professor','emplos'],[],[],[],[],[],[],[],[],[],6)
+
+
+#draw(['Employee','Employee','Supervises'],['Employee','Name','Sex','Address','salary'],[],[],[],[],[],[],[],[],5)
+#draw(['Employee','Department','Manages'],[],[],[],[],[],[],[],[],[],5)
+
+#draw(['Employee','Dependent','Dependents_of'],[],[],[],[],[],[],[],[],[],5)
+
+#draw(['Employee','Project','Works_on'],['Project','Name','Number','Location'],[],[],[],[],[],[],[],[],5)
+
+#draw(['Department','Project','Controls'],['Department','Name','Number','Location'],[],[],[],[],[],[],[],[],5)
 
 
 

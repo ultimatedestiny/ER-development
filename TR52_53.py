@@ -1,11 +1,11 @@
 from stanfordcorenlp import StanfordCoreNLP
 
-def tr52_53(sen):
+def tr52_53(sen,POS):
     nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
 
     #sen = "CardReader, CashDispenser and ReceiptPrinter are parts of ATM."
-
-    pos = nlp.pos_tag(sen)
+    pos = POS
+    #pos = nlp.pos_tag(sen)
 
     #print(pos)
 
@@ -50,8 +50,12 @@ def tr52_53(sen):
             if (pos_2[i][1].startswith("NN")):
                 m.append(pos_2[i][0])
 
+        print("")
+        print("OUTPUT OF TR52")
         print(m)
-    nlp.close()
+        print("")
+        print("")
+    #nlp.close()
     return m
 
 #tr52_53("CardReader, CashDispenser and ReceiptPrinter are parts of ATM.")

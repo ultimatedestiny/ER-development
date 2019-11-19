@@ -1,11 +1,12 @@
 from stanfordcorenlp import StanfordCoreNLP
 
-def tr48(sen):
-    nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
+def tr48(sen,POS):
+    #nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
 
     #sen = "Memory has types RAM and ROM."
 
-    pos = nlp.pos_tag(sen)
+    pos = POS
+    #pos = nlp.pos_tag(sen)
 
     #print(pos)
 
@@ -47,8 +48,12 @@ def tr48(sen):
             if (pos_2[i][1].startswith("NN")):
                 m.append(pos_2[i][0])
 
+        print("")
+        print("OUTPUT OF TR48")
         print(m)
-    nlp.close()
+        print("")
+        print("")
+    #nlp.close()
     return m
     
 #tr48("Memory has types RAM and ROM.")
