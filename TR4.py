@@ -54,6 +54,9 @@ def tr4(sen,POS):
                                 attributes_list.append([list_of_nouns[j],list_of_nouns[i]])
         #nlp.close()
         print(attributes_list)
-        return attributes_list[0]
+        if(len(attributes_list)==0):
+                return attributes_list
+        else:
+                return attributes_list[0]
 
 #tr4("withdrawal has withdrawalamount, withdrawaldate, withdrawaltime, withdrawaltype.")

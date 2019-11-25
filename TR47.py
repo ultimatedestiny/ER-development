@@ -1,4 +1,4 @@
-from stanfordcorenlp import StanfordCoreNLP
+#from stanfordcorenlp import StanfordCoreNLP
 
 def tr47(sen,POS):
     #nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')

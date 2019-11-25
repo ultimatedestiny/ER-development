@@ -1,11 +1,12 @@
-from stanfordcorenlp import StanfordCoreNLP
-def tr5(sentence,POS):
-    nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
+#from stanfordcorenlp import StanfordCoreNLP
+def tr5(sentence,POS,TOKENIZED,PARSED):
+    #nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
     #sentence = 'The system validates that the ATM has enough funds'
-
-    tokenized=['ROOT-0']
-    for word in nlp.word_tokenize(sentence):
-        tokenized.append(word)
+    tokenized = TOKENIZED
+    parsed = PARSED
+    #tokenized=['ROOT-0']
+    #for word in nlp.word_tokenize(sentence):
+    #    tokenized.append(word)
     pos = POS
     #pos = nlp.pos_tag(sentence)
     pos_2 = [list(tup) for tup in pos]
@@ -29,10 +30,10 @@ def tr5(sentence,POS):
     j=Q[5:]
     print(j)
     #print(pos_2)
-    parsed = nlp.dependency_parse(j)
+    #parsed = nlp.dependency_parse(j)
     parsed2 = [list(s) for s in parsed]
     print(parsed2)
-    nlp.close()
+    #nlp.close()
     l=sentence.split()
     print(l)
 

@@ -1,7 +1,7 @@
-from stanfordcorenlp import StanfordCoreNLP
+#from stanfordcorenlp import StanfordCoreNLP
 
 def tr52_53(sen,POS):
-    nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
+    #nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
 
     #sen = "CardReader, CashDispenser and ReceiptPrinter are parts of ATM."
     pos = POS

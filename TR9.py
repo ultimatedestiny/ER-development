@@ -1,16 +1,17 @@
-from stanfordcorenlp import StanfordCoreNLP
+#from stanfordcorenlp import StanfordCoreNLP
 
-def tr9(sen,POS):
-    nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
+def tr9(sen,POS,TOKENIZED,PARSED):
+    #nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
 
     #sen = "The system informs the interested user"
 
-    tokenized=['ROOT-0']
-    for word in nlp.word_tokenize(sen):
-        tokenized.append(word)
-
+    #tokenized=['ROOT-0']
+    #for word in nlp.word_tokenize(sen):
+    #    tokenized.append(word)
+    parsed = PARSED
+    tokenized = TOKENIZED
     print(tokenized)    
-    parsed = nlp.dependency_parse(sen)
+    #parsed = nlp.dependency_parse(sen)
     print(parsed)
 
     k=0
@@ -29,7 +30,7 @@ def tr9(sen,POS):
             k=parsed_2[i][1]
             l=parsed_2[i][2]
             attribute_list.append([tokenized[k],tokenized[l]])
-    nlp.close()
+    #nlp.close()
     if count==0:
         attribute_list = []
     

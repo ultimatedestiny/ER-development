@@ -77,13 +77,13 @@ def sent_token(sentence_tokenized):
         feed = sentence_tokenized[i]
         feed2 = TR1.tr1(feed)
         print("\n")
-        entity,POS = sentence_structure_determine(feed2)
+        entity,POS,TOKENIZED,PARSED = sentence_structure_determine(feed2)
         attr4 = TR4.tr4(feed2,POS)
-        attr5 = TR5.tr5(feed2,POS)
-        attr6 = TR6.tr6(feed2,POS)
-        attr7 = TR7.tr7(feed2,POS)
+        attr5 = TR5.tr5(feed2,POS,TOKENIZED,PARSED)
+        attr6 = TR6.tr6(feed2,POS,TOKENIZED,PARSED)
+        attr7 = TR7.tr7(feed2,POS,TOKENIZED,PARSED)
         attr8 = TR8.tr8(feed2,POS)
-        attr9 = TR9.tr9(feed2,POS)
+        attr9 = TR9.tr9(feed2,POS,TOKENIZED,PARSED)
         attr47 = TR47.tr47(feed2,POS)
         attr48 = TR48.tr48(feed2,POS)
         attr52_53 = TR52_53.tr52_53(feed2,POS)
@@ -197,10 +197,10 @@ def sentence_structure_determine(sentence):
                                                     o.append(entity_1)
                                                     o.append(entity_2)
                                                     o.append(relationship)
-                                                    return o,tagged
+                                                    return o,tagged,tokenized,parsed
                                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                                     #transform.SVDOThatClause(entity_1, entity_2, entity_1_attr1, relationship)
-                                                    goto(791)
+                                                    goto(803)
                                                     #exit(0)                     #exiting from the program since task completed.
                                     sentence_structure = "SVThatClause"     #list l3 contains 2 nsubj,cop,mark but not dobj and ccomp, hence the sent struc is SVTHATCLAUSE.
                                     print(sentence_structure)  #printing structure identofied
@@ -211,10 +211,10 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged
+                                    return o,tagged,tokenized,parsed
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVThatClause(entity_1, entity_2, relationship)
-                                    goto(791)
+                                    goto(803)
                                     #exit(0)     #exiting from program 
                             for dob in range(len(l3)):#above coding does not get 'mark' dependency and hence not to go inside it , hence control comes here to check dependenies after 2 'nsubj' and cop
                                 if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
@@ -238,10 +238,10 @@ def sentence_structure_determine(sentence):
                                                     o.append(entity_1)
                                                     o.append(entity_2)
                                                     o.append(relationship)
-                                                    return o,tagged
+                                                    return o,tagged,tokenized,parsed
                                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                                     #transform.SVDOConjClause(entity_1, entity_2, relationship)
-                                                    goto(791)
+                                                    goto(803)
                                                     #exit(0)
                     for dep_i in range(len(l3)):
                         if(l3[dep_i][0] == 'dep'):
@@ -259,10 +259,10 @@ def sentence_structure_determine(sentence):
                                         o.append(entity_1)
                                         o.append(entity_2)
                                         o.append(relationship)
-                                        return o,tagged
+                                        return o,tagged,tokenized,parsed
                                         #entity_matrix.append(entity_1,entity_2,relationship)
                                         #transform.SVDOPresentPart(entity_1, entity_2, relationship)
-                                        goto(791)
+                                        goto(803)
                                         #exit(0)
 
                             
@@ -282,10 +282,10 @@ def sentence_structure_determine(sentence):
                                         o.append(entity_1)
                                         o.append(entity_2)
                                         o.append(relationship)
-                                        return o,tagged
+                                        return o,tagged,tokenized,parsed
                                         #entity_matrix.append(entity_1,entity_2,relationship)
                                         #transform.SVDOAdj(entity_1, entity_2, relationship)
-                                        goto(791)
+                                        goto(803)
                                         #exit(0)
                                     if(POS_tagged_list[check][1] == 'NN'):
                                         sentence_structure = 'SVDONoun'
@@ -297,10 +297,10 @@ def sentence_structure_determine(sentence):
                                         o.append(entity_1)
                                         o.append(entity_2)
                                         o.append(relationship)
-                                        return o,tagged
+                                        return o,tagged,tokenized,parsed
                                         #entity_matrix.append(entity_1,entity_2,relationship)
                                         #transform.SVDONoun(entity_1, entity_2, relationship)
-                                        goto(791)
+                                        goto(803)
                                         #exit(0)
             for dob in range(len(l3)):
                 if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
@@ -333,10 +333,10 @@ def sentence_structure_determine(sentence):
                                                     o.append(entity_1)
                                                     o.append(entity_2)
                                                     o.append(relationship)
-                                                    return o,tagged
+                                                    return o,tagged,tokenized,parsed
                                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                                     #transform.SVDONotToInf(entity_1, entity_2, relationship)
-                                                    goto(791)
+                                                    goto(803)
                                                     #exit(0)
                                             sentence_structure = 'SVNotToInf'
                                             print(sentence_structure)
@@ -347,10 +347,10 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o,tagged
+                                            return o,tagged,tokenized,parsed
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVNotToInf(entity_1, entity_2, relationship)
-                                            goto(791)
+                                            goto(803)
                                             #exit(0)
                                     sentence_structure = 'SVToInf'
                                     print(sentence_structure)
@@ -361,10 +361,10 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged
+                                    return o,tagged,tokenized,parsed
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVToInf(entity_1, entity_2, relationship)
-                                    goto(791)
+                                    goto(803)
                                     #exit(0)
                             for advcl_i in range(len(l3)):
                                 if(l3[advcl_i][0] == 'advcl'):
@@ -383,10 +383,10 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o,tagged
+                                            return o,tagged,tokenized,parsed
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVDOtobeComp(entity_1, entity_2, relationship)
-                                            goto(791)
+                                            goto(803)
                                             #exit(0)
                                     for advmod_i in range(len(l3)):
                                         if(l3[advmod_i][0] == 'advmod'):
@@ -401,10 +401,10 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o,tagged
+                                            return o,tagged,tokenized,parsed
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVDOConjToInf(entity_1, entity_2, relationship)
-                                            goto(791)
+                                            goto(803)
                                             #exit(0)
                                     sentence_structure = "SVDOToInf"
                                     print(sentence_structure)
@@ -415,10 +415,10 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged
+                                    return o,tagged,tokenized,parsed
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVDOToInf(entity_1, entity_2, relationship)
-                                    goto(791)
+                                    goto(803)
                                     #exit(0)
                     for xcomp_i in range(len(l3)):
                         if(l3[xcomp_i][0] == 'xcomp'):
@@ -433,10 +433,10 @@ def sentence_structure_determine(sentence):
                             o.append(entity_1)
                             o.append(entity_2)
                             o.append(relationship)
-                            return o,tagged
+                            return o,tagged,tokenized,parsed
                             #entity_matrix.append(entity_1,entity_2,relationship)
                             #transform.SVGerund(entity_1, entity_2, relationship)
-                            goto(791)
+                            goto(803)
                             #exit(0)
                     for iobj_i in range(len(l3)):
                         if(l3[iobj_i][0] == 'iobj'):
@@ -451,10 +451,10 @@ def sentence_structure_determine(sentence):
                             o.append(entity_1)
                             o.append(entity_2)
                             o.append(relationship)
-                            return o,tagged
+                            return o,tagged,tokenized,parsed
                             #entity_matrix.append(entity_1,entity_2,relationship)
                             #transform.SVIODO(entity_1, entity_2, relationship)
-                            goto(791)
+                            goto(803)
                             #exit(0)
                     for advmod_i in range(len(l3)):
                         if(l3[advmod_i][0] == 'advmod'):
@@ -469,10 +469,10 @@ def sentence_structure_determine(sentence):
                             o.append(entity_1)
                             o.append(entity_2)
                             o.append(relationship)
-                            return o,tagged
+                            return o,tagged,tokenized,parsed
                             #entity_matrix.append(entity_1,entity_2,relationship)
                             #transform.SVDOAdverbial(entity_1, entity_2, relationship)
-                            goto(791)
+                            goto(803)
                             #exit(0)
                     for case_i in range(len(l3)):
                         if(l3[case_i][0] == 'case'):
@@ -495,10 +495,10 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o,tagged
+                                            return o,tagged,tokenized,parsed
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVDOPastPart(entity_1, entity_2, relationship)
-                                            goto(791)
+                                            goto(803)
                                             #exit(0)
                                     sentence_structure = "SVDOPO"
                                     print(sentence_structure)
@@ -512,10 +512,10 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged
+                                    return o,tagged,tokenized,parsed
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVDOPO(entity_1, entity_2, relationship)
-                                    goto(791)
+                                    goto(803)
                                     #exit(0)
                     for compound_i in range(len(l3)):
                         if(l3[compound_i][0] == 'compound'):
@@ -534,11 +534,11 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged
+                                    return o,tagged,tokenized,parsed
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVDO(entity_1, entity_2, relationship)
                                     print(sentence_structure)
-                                    goto(791)
+                                    goto(803)
                                     #exit(0)
                             for aux_i in range(len(l3)):
                                 if(l3[aux_i][0] == 'aux'):
@@ -553,10 +553,10 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged
+                                    return o,tagged,tokenized,parsed
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SAuxVDO(entity_1, entity_2, relationship)
-                                    goto(791)
+                                    goto(803)
                                     #exit(0)
             for advmod_i in range(len(l3)):
                 if(l3[advmod_i][0] == 'advmod'):
@@ -579,10 +579,10 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged
+                                    return o,tagged,tokenized,parsed
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVConjToInf(entity_1, entity_2, relationship)
-                                    goto(791)
+                                    goto(803)
                                     #exit(0)
                             for n2 in range(n1,len(l3)):
                                 if(l3[n2][0] == 'nsubj'):
@@ -601,10 +601,10 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o,tagged
+                                            return o,tagged,tokenized,parsed
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVConjClause(entity_1, entity_2, relationship)
-                                            goto(791)
+                                            goto(803)
                                             #exit(0)
                     for cc_i in range(len(l3)):
                         if(l3[cc_i][0] == 'cc'):
@@ -623,10 +623,10 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged
+                                    return o,tagged,tokenized,parsed
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVAdverbialAdjunct(entity_1, entity_2, relationship)
-                                    goto(791)
+                                    goto(803)
                                     #exit(0)
             for cop_i in range(len(l3)):
                 if(l3[cop_i][0] == 'cop'):
@@ -642,7 +642,7 @@ def sentence_structure_determine(sentence):
                                     mark_B = l3[mark_i][2]
                                     sentence_structure = "Conditional"
                                     print(sentence_structure)
-                                    goto(791)
+                                    goto(803)
                                     #exit(0)
                     for check in range(len(POS_tagged_list)):
                         if(POS_tagged_list[check][0] == tokenized[cop_B]):
@@ -656,10 +656,10 @@ def sentence_structure_determine(sentence):
                                 o.append(entity_1)
                                 o.append(entity_2)
                                 o.append(relationship)
-                                return o,tagged
+                                return o,tagged,tokenized,parsed
                                 #entity_matrix.append(entity_1,entity_2,relationship)
                                 #transform.SVPredicative(entity_1, entity_1_attr1, relationship)
-                                goto(791)
+                                goto(803)
                                 #exit(0)
                             elif(POS_tagged_list[check][1] == 'NN'):
                                 sentence_structure = "SVPredicative"
@@ -671,10 +671,10 @@ def sentence_structure_determine(sentence):
                                 o.append(entity_1)
                                 o.append(entity_2)
                                 o.append(relationship)
-                                return o,tagged
+                                return o,tagged,tokenized,parsed
                                 #entity_matrix.append(entity_1,entity_2,relationship)
                                 #transform.SVPredicative(entity_1, entity_2, relationship)
-                                goto(791)
+                                goto(803)
                                 #exit(0)
             for case_i in range(len(l3)):
                 if(l3[case_i][0] == 'case'):
@@ -700,10 +700,10 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged
+                                    return o,tagged,tokenized,parsed
                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                     #transform.SVForComp(entity_1, entity_2, relationship)
-                                    goto(791)
+                                    goto(803)
                                     #exit(0)
                             sentence_structure = "SVPO"
                             print(sentence_structure)
@@ -714,10 +714,10 @@ def sentence_structure_determine(sentence):
                             o.append(entity_1)
                             o.append(entity_2)
                             o.append(relationship)
-                            return o,tagged
+                            return o,tagged,tokenized,parsed
                             #entity_matrix.append(entity_1,entity_2,relationship)
                             #transform.SVPO(entity_1, entity_2, relationship)
-                            goto(791)
+                            goto(803)
                             #exit(0)
             sentence_structure = "SV"
             print(sentence_structure)
@@ -725,16 +725,27 @@ def sentence_structure_determine(sentence):
             #entity_2 = tokenized[nsubj_B]
             #relationship = tokenized[nsubj_A]
             entity_1 = tokenized[nsubj_B]
-            entity_2 = tokenized[dobj_D]
-            relationship = tokenized[nsubj_A]
-            o = []
-            o.append(entity_1)
-            o.append(entity_2)
-            o.append(relationship)
-            return o,tagged
+            for d in range(len(l3)):
+                if(l3[d][0] == 'dobj'):
+                    dobj_D = l3[d][2]
+                    entity_2 = tokenized[dobj_D]
+                    relationship = tokenized[nsubj_A]
+                    o = []
+                    o.append(entity_1)
+                    o.append(entity_2)
+                    o.append(relationship)
+                    goto(745)
+                else:
+                    entity_2 = entity_1
+                    relationship = tokenized[nsubj_A]
+                    o = []
+                    o.append(entity_1)
+                    o.append(entity_2)
+                    o.append(relationship)
+            return o,tagged,tokenized,parsed
             #entity_matrix.append(entity_1,entity_2,relationship)
             #transform.SV(entity_1, entity_2, relationship)
-            goto(791)
+            goto(803)
             #exit(0)
     for nsubj_p in range(len(l3)):
         if(l3[nsubj_p][0] == 'nsubjpass'):
@@ -769,10 +780,10 @@ def sentence_structure_determine(sentence):
                                                     o.append(entity_1)
                                                     o.append(entity_2)
                                                     o.append(relationship)
-                                                    return o,tagged
+                                                    return o,tagged,tokenized,parsed
                                                     #entity_matrix.append(entity_1,entity_2,relationship)
                                                     #transform.SAuxVPassPO(entity_1, entity_2, relationship)
-                                                    goto(791)
+                                                    goto(803)
                                                     #exit(0)
                                             sentence_structure = 'SVPassPO'
                                             print(sentence_structure)
@@ -783,10 +794,10 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o,tagged
+                                            return o,tagged,tokenized,parsed
                                             #entity_matrix.append(entity_1,entity_2,relationship)
                                             #transform.SVPassPO(entity_1, entity_2, relationship)
-                                            goto(791)
+                                            goto(803)
                                             #exit(0)
         break
     print(" ")

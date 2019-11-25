@@ -105,6 +105,7 @@ def draw(entity,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8,attr9,para):
 
                 
     print(l)
+    print(sentence_no)
     if(len(l)==sentence_no):
         joint_entity_attr_relation.append(e[0],e[1],e[2],l[sentence_no-1],sentence_no-1,para_length)
         return
@@ -113,23 +114,29 @@ def draw(entity,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8,attr9,para):
     else:
         joint_entity_attr_relation.append_only_entity_relation(e[0],e[1],e[2],sentence_no-1,para_length)
         return
-
+    '''if not l :
+        joint_entity_attr_relation.append_only_entity_relation(e[0],e[1],e[2],sentence_no-1,para_length)
+        return
+    else:
+        joint_entity_attr_relation.append(e[0],e[1],e[2],l[0],sentence_no-1,para_length)
+        return'''
 
 
 #print(l)
-#draw(['customer','withdrawal','carries'],['withdrawal','amount'],['withdrawal','date'],['withdrawal','time'],[],[],[],['withdrawal','type'],[],[],2)
+#draw(['customer','withdrawal','carries'],['withdrawal','amount','withdrawalnumber'],['withdrawal','date'],['withdrawal','time'],[],[],[],['withdrawal','type'],[],[],2)
 #draw(['system','user','warns'],['system','id'],['system','modelname','modelnumber'],['system','make'],[],[],[],[],[],[],2)
 
-#draw(['customer','withdrawal','carries'],[],[],[],[],[],[],[],[],[],2)
-#draw(['system','user','warns'],[],[],[],[],[],[],[],[],[],2)
-#draw(['Professor','Student','teaches'],[],[],[],[],[],[],[],[],[],5)
+#draw(['customer','withdrawal','carries'],[],[],[],[],[],[],[],[],[],4)
+#draw(['system','user','warns'],[],[],[],[],[],[],[],[],[],4)
+'''draw(['Professor','Student','teaches'],[],[],[],[],[],[],[],[],[],2)
+draw(['Institute','Details','has'],['Details','Name','Address','Affiliated_to''Affiliationnumber'],[],[],[],[],[],[],[],[],4)
 
-#draw(['Student','Courses','studies'],['Courses','Mathematics','TOC','Machine Learning',],[],[],[],[],[],[],[],[],5)
-#draw(['Student','Books','reads'],['Books','TOC_hopcroft','OS_Tanenbaum'],[],[],[],[],[],[],[],[],5)
-#draw(['Student','Library','reads_in'],[],[],[],[],[],[],[],[],[],5)
+draw(['Institute','Student','admits'],['Student','Name','Address','Enrollno'],[],[],[],[],[],[],[],[],4)
 
-#draw(['Institute','Student','admits'],['Student','Name','Address','Roll_no'],[],[],[],[],[],[],[],[],5)
-#draw(['Institute','Professor','emplos'],[],[],[],[],[],[],[],[],[],6)
+draw(['Student','Courses','studies'],['Courses','Mathematics','TOC','Machine Learning'],[],[],[],[],[],[],[],[],4)
+draw(['Student','Books','reads'],['Books','TOC_hopcroft','OS_Tanenbaum','Booknumber'],[],[],[],[],[],[],[],[],4)'''
+#draw(['Student','Library','reads_in'],['Library','Cardnumber','Issued_on','Issued_till'],[],[],[],[],[],[],[],[],5)
+
 
 
 #draw(['Employee','Employee','Supervises'],['Employee','Name','Sex','Address','salary'],[],[],[],[],[],[],[],[],5)
