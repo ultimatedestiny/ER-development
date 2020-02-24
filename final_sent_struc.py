@@ -1,11 +1,7 @@
-import nltk
 import sys
 from stanfordcorenlp import StanfordCoreNLP
 from nltk.tag import StanfordPOSTagger
 from collections import defaultdict
-from graphviz import Digraph
-import er_diag_func as transform
-import entity_matrix
 import TR1
 import TR4
 import TR5
@@ -77,7 +73,7 @@ def sent_token(sentence_tokenized):
         feed = sentence_tokenized[i]
         feed2 = TR1.tr1(feed)
         print("\n")
-        entity,POS,TOKENIZED,PARSED = sentence_structure_determine(feed2)
+        L3,POS,TOKENIZED,PARSED = parsing_tokinizing(feed2)
         attr4 = TR4.tr4(feed2,POS)
         attr5 = TR5.tr5(feed2,POS,TOKENIZED,PARSED)
         attr6 = TR6.tr6(feed2,POS,TOKENIZED,PARSED)
@@ -87,12 +83,16 @@ def sent_token(sentence_tokenized):
         attr47 = TR47.tr47(feed2,POS)
         attr48 = TR48.tr48(feed2,POS)
         attr52_53 = TR52_53.tr52_53(feed2,POS)
-        finalgraph.draw(entity,attr4,attr5,attr6,attr7,attr8,attr9,attr47,attr48,attr52_53,para_length)
-        #finalgraph.draw(entity,attr4,attr5,attr8,attr9,attr47,attr48,attr52_53,para_length)
+        if (len(attr4) == len(attr5) == len(attr6) == len(attr7) == len(attr8) == len(attr9) == len(attr47) == len(attr48) == len(attr52_53) == 0):
+            print(1)
+            entities_relationships_list = sentence_structure_determine(L3,TOKENIZED,POS)
+            finalgraph.draw(entities_relationships_list,attr4,attr5,attr6,attr7,attr8,attr9,attr47,attr48,attr52_53,para_length)
+        else:
+            finalgraph.draw([],attr4,attr5,attr6,attr7,attr8,attr9,attr47,attr48,attr52_53,para_length)
 
 
-#PROCEDURE FOR PARsSING AND GENERATION OF LIST OF LISTS.
-def sentence_structure_determine(sentence):
+
+def parsing_tokinizing(sentence):
     nlp = StanfordCoreNLP(r'H:\stanford parser\stanford-corenlp-full-2018-10-05')
     tokenized = ['ROOT-0']
     for word in nlp.word_tokenize(sentence):   #TOKENIZATION
@@ -100,7 +100,6 @@ def sentence_structure_determine(sentence):
     print(tokenized, )
     parsed = nlp.dependency_parse(sentence)   #PARSING TO GET DEPENDENCIES
     print(parsed)                              #DEPENDENCIES PRINTED
-    nlp.close()                         #STANFORD PARSER CLOSED
     l1 = []
     for i in parsed:
         for j in i:
@@ -136,7 +135,7 @@ def sentence_structure_determine(sentence):
         text = text + " "
     print(text)
     #STANFORD TAGGER OPENED
-    stanford_dir = (r"H:\stanford parser\stanford-postagger-2018-10-16")
+    '''stanford_dir = (r"H:\stanford parser\stanford-postagger-2018-10-16")
     modelfile = stanford_dir+(r"\models\english-bidirectional-distsim.tagger")
     jarfile = stanford_dir+(r"\stanford-postagger.jar")
     tagger = StanfordPOSTagger(model_filename=modelfile, path_to_jar=jarfile)
@@ -159,77 +158,205 @@ def sentence_structure_determine(sentence):
     POS_tagged_list = []
     for i in range(len(tagged_dictionary)):
         POS_tagged_list.append(tagged_dictionary[i])
-    print(POS_tagged_list)                      # list of lists with pos_tags.
-    
-    # Procedure to determine sentence structure starts
-    for n1 in range(len(l3)):
-        if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
-            nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
-            nsubj_B = l3[n1][2]         #storing the 2nd numeric value of the 'nsubj' dependency
-            n1 = n1 + 1                  #storing the index where the 1st 'nsubj' depenedency occurs.
-            for n2 in range(n1, len(l3)):
-                if(l3[n2][0] == 'nsubj'):           #searching 2nd occurrence of 'nsubj'
-                    nsubj_2_A = l3[n2][1]           #storing the dependency numerics
-                    nsubj_2_B = l3[n2][2]
-                    for cop in range(len(l3)):
-                        if(l3[cop][0] == 'cop'):
-                            cop_A = l3[cop][1]              #similarly storing dependency numerics values for cop dependency.
-                            cop_B = l3[cop][2]
-                            for mark_i in range(len(l3)):
-                                if(l3[mark_i][0] == 'mark'):
-                                    mark_A = l3[mark_i][1]
-                                    mark_B = l3[mark_i][2]
-                                    for dob in range(len(l3)):
-                                        if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
-                                            #no_of_dobj = 1
-                                            dobj_A = l3[dob][1]
-                                            dobj_D = l3[dob][2]
-                                            for ccomp_i in range(len(l3)):
-                                                if(l3[ccomp_i][0] == 'ccomp'):
-                                                    ccomp_A = l3[ccomp_i][1]
-                                                    ccomp_B = l3[ccomp_i][2]
-                                                    sentence_structure = "SVDOThatClause"    #list of lists l3 contains 2 nsubj, cop,mark,dobj,comp hence sentence structure is SVDOThat clause.
-                                                    print(sentence_structure)           #printing sentence structure identified
-                                                    entity_1 = tokenized[nsubj_B]
-                                                    entity_2 = tokenized[dobj_D]
-                                                    relationship = tokenized[dobj_A]
-                                                    o = []
-                                                    o.append(entity_1)
-                                                    o.append(entity_2)
-                                                    o.append(relationship)
-                                                    return o,tagged,tokenized,parsed
-                                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                                    #transform.SVDOThatClause(entity_1, entity_2, entity_1_attr1, relationship)
-                                                    goto(803)
-                                                    #exit(0)                     #exiting from the program since task completed.
-                                    sentence_structure = "SVThatClause"     #list l3 contains 2 nsubj,cop,mark but not dobj and ccomp, hence the sent struc is SVTHATCLAUSE.
-                                    print(sentence_structure)  #printing structure identofied
+    print(POS_tagged_list)                      # list of lists with pos_tags.'''
+    #real tagger by vishal
+
+    tagged = nlp.pos_tag(text)
+
+    print("hey --->> ",tagged)    # Printing pos tags of sentence
+
+    POS_tagged_list = [list(tup) for tup in tagged]  
+    print("hey --->> ",POS_tagged_list)     #list of tuple to list of list conversion
+    nlp.close()
+    return l3,tagged,tokenized,parsed
+
+
+#PROCEDURE FOR PARsSING AND GENERATION OF LIST OF LISTS.
+def sentence_structure_determine(l3,TOKENIZED,POS):
+    try:
+        tokenized = TOKENIZED
+        POS_tagged_list = POS
+        for n1 in range(len(l3)):
+            if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                nsubj_B = l3[n1][2]         #storing the 2nd numeric value of the 'nsubj' dependency
+                n1 = n1 + 1                  #storing the index where the 1st 'nsubj' depenedency occurs.
+                for n2 in range(n1, len(l3)):
+                    if(l3[n2][0] == 'nsubj'):           #searching 2nd occurrence of 'nsubj'
+                        nsubj_2_A = l3[n2][1]           #storing the dependency numerics
+                        nsubj_2_B = l3[n2][2]
+                        for mark_i in range(len(l3)):
+                            if(l3[mark_i][0] == 'mark'):
+                                mark_A = l3[mark_i][1]
+                                mark_B = l3[mark_i][2]
+                                for dob in range(len(l3)):
+                                    if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
+                                        #no_of_dobj = 1
+                                        dobj_A = l3[dob][1]
+                                        dobj_D = l3[dob][2]
+                                        sentence_structure = "SVDOThatClause"    #list of lists l3 contains 2 nsubj, cop,mark,dobj,comp hence sentence structure is SVDOThat clause.
+                                        print(sentence_structure)           #printing sentence structure identified
+                                        entity_1 = tokenized[nsubj_B]
+                                        entity_2 = tokenized[dobj_D]
+                                        relationship = tokenized[dobj_A]
+                                        o = []
+                                        o.append(entity_1)
+                                        o.append(entity_2)
+                                        o.append(relationship)
+                                        return o
+        for n1 in range(len(l3)):
+            if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                nsubj_B = l3[n1][2]         #storing the 2nd numeric value of the 'nsubj' dependency
+                n1 = n1 + 1                  #storing the index where the 1st 'nsubj' depenedency occurs.
+                for n2 in range(n1, len(l3)):
+                    if(l3[n2][0] == 'nsubj'):           #searching 2nd occurrence of 'nsubj'
+                        nsubj_2_A = l3[n2][1]           #storing the dependency numerics
+                        nsubj_2_B = l3[n2][2]
+                        for mark_i in range(len(l3)):
+                            if(l3[mark_i][0] == 'mark'):
+                                mark_A = l3[mark_i][1]
+                                mark_B = l3[mark_i][2]
+                                sentence_structure = "SVThatClause"     #list l3 contains 2 nsubj,cop,mark but not dobj and ccomp, hence the sent struc is SVTHATCLAUSE.
+                                print(sentence_structure)  #printing structure identofied
+                                entity_1 = tokenized[nsubj_B]
+                                entity_2 = tokenized[nsubj_2_B]
+                                relationship = tokenized[nsubj_A]
+                                o = []
+                                o.append(entity_1)
+                                o.append(entity_2)
+                                o.append(relationship)
+                                return o
+        for n1 in range(len(l3)):
+            if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                nsubj_B = l3[n1][2]         #storing the 2nd numeric value of the 'nsubj' dependency
+                n1 = n1 + 1                  #storing the index where the 1st 'nsubj' depenedency occurs.
+                for n2 in range(n1, len(l3)):
+                    if(l3[n2][0] == 'nsubj'):           #searching 2nd occurrence of 'nsubj'
+                        nsubj_2_A = l3[n2][1]           #storing the dependency numerics
+                        nsubj_2_B = l3[n2][2]
+                        for dob in range(len(l3)):#above coding does not get 'mark' dependency and hence not to go inside it , hence control comes here to check dependenies after 2 'nsubj' and cop
+                            if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
+                                #no_of_dobj = 1
+                                dobj_A = l3[dob][1]
+                                dobj_D = l3[dob][2]
+                                for advmod_i in range(len(l3)):
+                                    if(l3[advmod_i][0] == 'advmod'):
+                                        advmod_A = l3[advmod_i][1]
+                                        advmod_B = l3[advmod_i][2]
+                                        sentence_structure = "SVDOConjClause" #l3 contains 2 nsubj, cop dobj advmod advcl hence struc is SVDOConjClause.
+                                        print(sentence_structure)
+                                        entity_1 = tokenized[nsubj_B]
+                                        entity_2 = tokenized[dobj_D]
+                                        relationship = tokenized[nsubj_A]
+                                        o = []
+                                        o.append(entity_1)
+                                        o.append(entity_2)
+                                        o.append(relationship)
+                                        return o
+        for n1 in range(len(l3)):
+                if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                    nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                    nsubj_B = l3[n1][2]         #storing the 2nd numeric value of the 'nsubj' dependency
+                    n1 = n1 + 1                  #storing the index where the 1st 'nsubj' depenedency occurs.
+                    for n2 in range(n1, len(l3)):
+                        if(l3[n2][0] == 'nsubj'):           #searching 2nd occurrence of 'nsubj'
+                            nsubj_2_A = l3[n2][1]           #storing the dependency numerics
+                            nsubj_2_B = l3[n2][2]
+                            for dep_i in range(len(l3)):
+                                if(l3[dep_i][0] == 'dep'):
+                                    dep_A = l3[dep_i][1]
+                                    dep_B = l3[dep_i][2]
+                                    sentence_structure = "SVDOPresentPart"
+                                    print(sentence_structure)
                                     entity_1 = tokenized[nsubj_B]
                                     entity_2 = tokenized[nsubj_2_B]
-                                    relationship = tokenized[nsubj_A]
+                                    relationship = tokenized[nsubj_A]+tokenized[nsubj_2_A]
                                     o = []
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged,tokenized,parsed
-                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                    #transform.SVThatClause(entity_1, entity_2, relationship)
-                                    goto(803)
-                                    #exit(0)     #exiting from program 
-                            for dob in range(len(l3)):#above coding does not get 'mark' dependency and hence not to go inside it , hence control comes here to check dependenies after 2 'nsubj' and cop
-                                if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
-                                    #no_of_dobj = 1
-                                    dobj_A = l3[dob][1]
-                                    dobj_D = l3[dob][2]
-                                    for advmod_i in range(len(l3)):
-                                        if(l3[advmod_i][0] == 'advmod'):
-                                            advmod_A = l3[advmod_i][1]
-                                            advmod_B = l3[advmod_i][2]
-                                            for advcl_i in range(len(l3)):
-                                                if(l3[advcl_i][0] == 'advcl'):
-                                                    advcl_A = l3[advcl_i][1]
-                                                    advcl_B = l3[advcl_i][2]
-                                                    sentence_structure = "SVDOConjClause" #l3 contains 2 nsubj, cop dobj advmod advcl hence struc is SVDOConjClause.
+                                    return o
+        for n1 in range(len(l3)):
+                if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                    nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                    nsubj_B = l3[n1][2]         #storing the 2nd numeric value of the 'nsubj' dependency
+                    n1 = n1 + 1                  #storing the index where the 1st 'nsubj' depenedency occurs.
+                    for n2 in range(n1, len(l3)):
+                        if(l3[n2][0] == 'nsubj'):           #searching 2nd occurrence of 'nsubj'
+                            nsubj_2_A = l3[n2][1]           #storing the dependency numerics
+                            nsubj_2_B = l3[n2][2]
+                            for xcomp_i in range(len(l3)):
+                                if(l3[xcomp_i][0] == 'xcomp'):
+                                    xcomp_A = l3[xcomp_i][1]
+                                    xcomp_B = l3[xcomp_i][2]
+                                    for check in range(len(POS_tagged_list)):
+                                        if(POS_tagged_list[check][0] == tokenized[nsubj_2_A]):
+                                            if(POS_tagged_list[check][1] == 'JJ'):
+                                                sentence_structure = 'SVDOAdj'
+                                                print(sentence_structure)
+                                                entity_1 = tokenized[nsubj_B]
+                                                entity_2 = tokenized[nsubj_2_B]
+                                                relationship = tokenized[nsubj_A]
+                                                o = []
+                                                o.append(entity_1)
+                                                o.append(entity_2)
+                                                o.append(relationship)
+                                                return o
+                                            if(POS_tagged_list[check][1] == 'NN'):
+                                                    sentence_structure = 'SVDONoun'
+                                                    print(sentence_structure)
+                                                    entity_1 = tokenized[nsubj_B]
+                                                    entity_2 = tokenized[nsubj_2_B]
+                                                    relationship = tokenized[nsubj_A]
+                                                    o = []
+                                                    o.append(entity_1)
+                                                    o.append(entity_2)
+                                                    o.append(relationship)
+                                                    return o
+        for n1 in range(len(l3)):
+                if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                    nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                    nsubj_B = l3[n1][2]         #storing the 2nd numeric value of the 'nsubj' dependency
+                    n1 = n1 + 1    
+                    for dob in range(len(l3)):
+                        if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
+                            #no_of_dobj = 1
+                            dobj_A = l3[dob][1]
+                            dobj_D = l3[dob][2]
+                            dob = dob +1
+                            for mark_i in range(len(l3)):
+                                if(l3[mark_i][0] == 'mark'):
+                                    mark_A = l3[mark_i][1]
+                                    mark_B = l3[mark_i][2]
+                                    for xcomp_i in range(len(l3)):
+                                        if(l3[xcomp_i][0] == 'xcomp'):
+                                            xcomp_A = l3[xcomp_i][1]
+                                            xcomp_B = l3[xcomp_i][2]
+                                            for neg_i in range(len(l3)):
+                                                if(l3[neg_i][0] == 'neg'):
+                                                    neg_A = l3[neg_i][1]
+                                                    neg_B = l3[neg_i][2]
+                                                    for dob2 in range(dob, len(l3)):
+                                                        if(l3[dob2][0] == 'dobj'):
+                                                            dobj_2_A = l3[dob2][1]
+                                                            dobj_2_B = l3[dob2][2]
+                                                            sentence_structure ='SVDONotToInf'
+                                                            print(sentence_structure)
+                                                            entity_1 = tokenized[nsubj_B]
+                                                            entity_2 = tokenized[dobj_D]
+                                                            relationship = tokenized[nsubj_A]
+                                                            o = []
+                                                            o.append(entity_1)
+                                                            o.append(entity_2)
+                                                            o.append(relationship)
+                                                            return o
+                                                            #entity_matrix.append(entity_1,entity_2,relationship)
+                                                            #transform.SVDONotToInf(entity_1, entity_2, relationship)
+                                                            goto(803)
+                                                            #exit(0)
+                                                    sentence_structure = 'SVNotToInf'
                                                     print(sentence_structure)
                                                     entity_1 = tokenized[nsubj_B]
                                                     entity_2 = tokenized[dobj_D]
@@ -238,76 +365,12 @@ def sentence_structure_determine(sentence):
                                                     o.append(entity_1)
                                                     o.append(entity_2)
                                                     o.append(relationship)
-                                                    return o,tagged,tokenized,parsed
-                                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                                    #transform.SVDOConjClause(entity_1, entity_2, relationship)
-                                                    goto(803)
-                                                    #exit(0)
-                    for dep_i in range(len(l3)):
-                        if(l3[dep_i][0] == 'dep'):
-                            dep_A = l3[dep_i][1]
-                            dep_B = l3[dep_i][2]
-                            for check in range(len(POS_tagged_list)):
-                                if(POS_tagged_list[check][0] == tokenized[nsubj_2_A]):
-                                    if(POS_tagged_list[check][1] == 'VBG'):
-                                        sentence_structure = "SVDOPresentPart"
-                                        print(sentence_structure)
-                                        entity_1 = tokenized[nsubj_B]
-                                        entity_2 = tokenized[nsubj_2_B]
-                                        relationship = tokenized[nsubj_A]+tokenized[nsubj_2_A]
-                                        o = []
-                                        o.append(entity_1)
-                                        o.append(entity_2)
-                                        o.append(relationship)
-                                        return o,tagged,tokenized,parsed
-                                        #entity_matrix.append(entity_1,entity_2,relationship)
-                                        #transform.SVDOPresentPart(entity_1, entity_2, relationship)
-                                        goto(803)
-                                        #exit(0)
-
-                            
-                    for xcomp_i in range(len(l3)):
-                        if(l3[xcomp_i][0] == 'xcomp'):
-                            xcomp_A = l3[xcomp_i][1]
-                            xcomp_B = l3[xcomp_i][2]
-                            for check in range(len(POS_tagged_list)):
-                                if(POS_tagged_list[check][0] == tokenized[nsubj_2_A]):
-                                    if(POS_tagged_list[check][1] == 'JJ'):
-                                        sentence_structure = 'SVDOAdj'
-                                        print(sentence_structure)
-                                        entity_1 = tokenized[nsubj_B]
-                                        entity_2 = tokenized[nsubj_2_B]
-                                        relationship = tokenized[nsubj_A]
-                                        o = []
-                                        o.append(entity_1)
-                                        o.append(entity_2)
-                                        o.append(relationship)
-                                        return o,tagged,tokenized,parsed
-                                        #entity_matrix.append(entity_1,entity_2,relationship)
-                                        #transform.SVDOAdj(entity_1, entity_2, relationship)
-                                        goto(803)
-                                        #exit(0)
-                                    if(POS_tagged_list[check][1] == 'NN'):
-                                        sentence_structure = 'SVDONoun'
-                                        print(sentence_structure)
-                                        entity_1 = tokenized[nsubj_B]
-                                        entity_2 = tokenized[nsubj_2_B]
-                                        relationship = tokenized[nsubj_A]
-                                        o = []
-                                        o.append(entity_1)
-                                        o.append(entity_2)
-                                        o.append(relationship)
-                                        return o,tagged,tokenized,parsed
-                                        #entity_matrix.append(entity_1,entity_2,relationship)
-                                        #transform.SVDONoun(entity_1, entity_2, relationship)
-                                        goto(803)
-                                        #exit(0)
-            for dob in range(len(l3)):
-                if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
-                    #no_of_dobj = 1
-                    dobj_A = l3[dob][1]
-                    dobj_D = l3[dob][2]
-                    dob = dob +1
+                                                    return o
+        for n1 in range(len(l3)):
+                if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                    nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                    nsubj_B = l3[n1][2]         #storing the 2nd numeric value of the 'nsubj' dependency
+                    n1 = n1 + 1                
                     for mark_i in range(len(l3)):
                         if(l3[mark_i][0] == 'mark'):
                             mark_A = l3[mark_i][1]
@@ -316,15 +379,57 @@ def sentence_structure_determine(sentence):
                                 if(l3[xcomp_i][0] == 'xcomp'):
                                     xcomp_A = l3[xcomp_i][1]
                                     xcomp_B = l3[xcomp_i][2]
-                                    for neg_i in range(len(l3)):
-                                        if(l3[neg_i][0] == 'neg'):
-                                            neg_A = l3[neg_i][1]
-                                            neg_B = l3[neg_i][2]
-                                            for dob2 in range(dob, len(l3)):
-                                                if(l3[dob2][0] == 'dobj'):
-                                                    dobj_2_A = l3[dob2][1]
-                                                    dobj_2_B = l3[dob2][2]
-                                                    sentence_structure ='SVDONotToInf'
+                                    sentence_structure = 'SVToInf'
+                                    print(sentence_structure)
+                                    for dob in range(len(l3)):
+                                        if(l3[dob][0] == 'dobj'):
+                                            dobj_A = l3[dob][1]
+                                            dobj_B = l3[dob][2]
+                                            entity_1 = tokenized[nsubj_B]
+                                            entity_2 = tokenized[dobj_B]
+                                            relationship = tokenized[nsubj_A]
+                                            o = []
+                                            o.append(entity_1)
+                                            o.append(entity_2)
+                                            o.append(relationship)
+                                            return o
+                                    else:
+                                        entity_1 = tokenized[nsubj_B]
+                                        entity_2 = tokenized[nsubj_B]
+                                        relationship = tokenized[nsubj_A]
+                                        o = []
+                                        o.append(entity_1)
+                                        o.append(entity_2)
+                                        o.append(relationship)
+                                        print("")
+                                        print("")
+                                        print("")
+                                        print("")
+                                        return o
+        for n1 in range(len(l3)):
+                if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                    nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                    nsubj_B = l3[n1][2]         #storing the 2nd numeric value of the 'nsubj' dependency
+                    n1 = n1 + 1     
+                    for dob in range(len(l3)):
+                        if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
+                            #no_of_dobj = 1
+                            dobj_A = l3[dob][1]
+                            dobj_D = l3[dob][2]
+                            dob = dob +1
+                            for mark_i in range(len(l3)):
+                                if(l3[mark_i][0] == 'mark'):
+                                    mark_A = l3[mark_i][1]
+                                    mark_B = l3[mark_i][2]
+                                    for advcl_i in range(len(l3)):
+                                        if(l3[advcl_i][0] == 'advcl'):
+                                            advcl_A = l3[advcl_i][1]
+                                            advcl_B = l3[advcl_i][2]
+                                            for cop_i in range(len(l3)):
+                                                if(l3[cop_i][0] == 'cop'):
+                                                    cop_A = l3[cop_i][1]
+                                                    cop_B = l3[cop_i][2]
+                                                    sentence_structure ="SVDOtobeComp"
                                                     print(sentence_structure)
                                                     entity_1 = tokenized[nsubj_B]
                                                     entity_2 = tokenized[dobj_D]
@@ -333,12 +438,22 @@ def sentence_structure_determine(sentence):
                                                     o.append(entity_1)
                                                     o.append(entity_2)
                                                     o.append(relationship)
-                                                    return o,tagged,tokenized,parsed
-                                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                                    #transform.SVDONotToInf(entity_1, entity_2, relationship)
-                                                    goto(803)
-                                                    #exit(0)
-                                            sentence_structure = 'SVNotToInf'
+                                                    return o
+                                            for advmod_i in range(len(l3)):
+                                                if(l3[advmod_i][0] == 'advmod'):
+                                                    advmod_A = l3[advmod_i][1]
+                                                    advmod_B = l3[advmod_i][2]
+                                                    sentence_structure = "SVDOConjToInf"
+                                                    print(sentence_structure)  
+                                                    entity_1 = tokenized[nsubj_B]
+                                                    entity_2 = tokenized[dobj_D]
+                                                    relationship = tokenized[nsubj_A]
+                                                    o = []
+                                                    o.append(entity_1)
+                                                    o.append(entity_2)
+                                                    o.append(relationship)
+                                                    return o
+                                            sentence_structure = "SVDOToInf"
                                             print(sentence_structure)
                                             entity_1 = tokenized[nsubj_B]
                                             entity_2 = tokenized[dobj_D]
@@ -347,79 +462,11 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o,tagged,tokenized,parsed
-                                            #entity_matrix.append(entity_1,entity_2,relationship)
-                                            #transform.SVNotToInf(entity_1, entity_2, relationship)
-                                            goto(803)
-                                            #exit(0)
-                                    sentence_structure = 'SVToInf'
-                                    print(sentence_structure)
-                                    entity_1 = tokenized[nsubj_B]
-                                    entity_2 = tokenized[dobj_D]
-                                    relationship = tokenized[nsubj_A]
-                                    o = []
-                                    o.append(entity_1)
-                                    o.append(entity_2)
-                                    o.append(relationship)
-                                    return o,tagged,tokenized,parsed
-                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                    #transform.SVToInf(entity_1, entity_2, relationship)
-                                    goto(803)
-                                    #exit(0)
-                            for advcl_i in range(len(l3)):
-                                if(l3[advcl_i][0] == 'advcl'):
-                                    advcl_A = l3[advcl_i][1]
-                                    advcl_B = l3[advcl_i][2]
-                                    for cop_i in range(len(l3)):
-                                        if(l3[cop_i][0] == 'cop'):
-                                            cop_A = l3[cop_i][1]
-                                            cop_B = l3[cop_i][2]
-                                            sentence_structure ="SVDOtobeComp"
-                                            print(sentence_structure)
-                                            entity_1 = tokenized[nsubj_B]
-                                            entity_2 = tokenized[dobj_D]
-                                            relationship = tokenized[nsubj_A]
-                                            o = []
-                                            o.append(entity_1)
-                                            o.append(entity_2)
-                                            o.append(relationship)
-                                            return o,tagged,tokenized,parsed
-                                            #entity_matrix.append(entity_1,entity_2,relationship)
-                                            #transform.SVDOtobeComp(entity_1, entity_2, relationship)
-                                            goto(803)
-                                            #exit(0)
-                                    for advmod_i in range(len(l3)):
-                                        if(l3[advmod_i][0] == 'advmod'):
-                                            advmod_A = l3[advmod_i][1]
-                                            advmod_B = l3[advmod_i][2]
-                                            sentence_structure = "SVDOConjToInf"
-                                            print(sentence_structure)  
-                                            entity_1 = tokenized[nsubj_B]
-                                            entity_2 = tokenized[dobj_D]
-                                            relationship = tokenized[nsubj_A]
-                                            o = []
-                                            o.append(entity_1)
-                                            o.append(entity_2)
-                                            o.append(relationship)
-                                            return o,tagged,tokenized,parsed
-                                            #entity_matrix.append(entity_1,entity_2,relationship)
-                                            #transform.SVDOConjToInf(entity_1, entity_2, relationship)
-                                            goto(803)
-                                            #exit(0)
-                                    sentence_structure = "SVDOToInf"
-                                    print(sentence_structure)
-                                    entity_1 = tokenized[nsubj_B]
-                                    entity_2 = tokenized[dobj_D]
-                                    relationship = tokenized[nsubj_A]
-                                    o = []
-                                    o.append(entity_1)
-                                    o.append(entity_2)
-                                    o.append(relationship)
-                                    return o,tagged,tokenized,parsed
-                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                    #transform.SVDOToInf(entity_1, entity_2, relationship)
-                                    goto(803)
-                                    #exit(0)
+                                            return o                                     
+        for n1 in range(len(l3)):
+                if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                    nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                    nsubj_B = l3[n1][2]  
                     for xcomp_i in range(len(l3)):
                         if(l3[xcomp_i][0] == 'xcomp'):
                             xcomp_A = l3[xcomp_i][1]
@@ -427,106 +474,37 @@ def sentence_structure_determine(sentence):
                             sentence_structure = "SVGerund"
                             print(sentence_structure)
                             entity_1 = tokenized[nsubj_B]
-                            entity_2 = tokenized[dobj_D]
                             relationship = tokenized[nsubj_A]
+                            for dob in range(len(l3)):
+                                if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
+                                    #no_of_dobj = 1
+                                    dobj_A = l3[dob][1]
+                                    dobj_D = l3[dob][2]
+                                    dob = dob +1
+                                    entity_2 = tokenized[dobj_D]
+                                else:
+                                    entity_2 = tokenized[nsubj_B]
                             o = []
                             o.append(entity_1)
                             o.append(entity_2)
                             o.append(relationship)
-                            return o,tagged,tokenized,parsed
-                            #entity_matrix.append(entity_1,entity_2,relationship)
-                            #transform.SVGerund(entity_1, entity_2, relationship)
-                            goto(803)
-                            #exit(0)
-                    for iobj_i in range(len(l3)):
-                        if(l3[iobj_i][0] == 'iobj'):
-                            iobj_A = l3[iobj_i][1]
-                            iobj_B = l3[iobj_i][2]
-                            sentence_structure ="SVIODO"
-                            print(sentence_structure)
-                            entity_1 = tokenized[nsubj_B]
-                            entity_2 = tokenized[dobj_D]
-                            relationship = tokenized[nsubj_A]
-                            o = []
-                            o.append(entity_1)
-                            o.append(entity_2)
-                            o.append(relationship)
-                            return o,tagged,tokenized,parsed
-                            #entity_matrix.append(entity_1,entity_2,relationship)
-                            #transform.SVIODO(entity_1, entity_2, relationship)
-                            goto(803)
-                            #exit(0)
-                    for advmod_i in range(len(l3)):
-                        if(l3[advmod_i][0] == 'advmod'):
-                            advmod_A = l3[advmod_i][1]
-                            advmod_B = l3[advmod_i][2]
-                            sentence_structure = "SVDOAdverbial"
-                            print(sentence_structure)
-                            entity_1 = tokenized[nsubj_B]
-                            entity_2 = tokenized[dobj_D]
-                            relationship = tokenized[nsubj_A]
-                            o = []
-                            o.append(entity_1)
-                            o.append(entity_2)
-                            o.append(relationship)
-                            return o,tagged,tokenized,parsed
-                            #entity_matrix.append(entity_1,entity_2,relationship)
-                            #transform.SVDOAdverbial(entity_1, entity_2, relationship)
-                            goto(803)
-                            #exit(0)
-                    for case_i in range(len(l3)):
-                        if(l3[case_i][0] == 'case'):
-                            case_A = l3[case_i][1] 
-                            case_B = l3[case_i][2]
-                            for nmod_i in range(len(l3)):
-                                if(l3[nmod_i][0] == 'nmod'):
-                                    nmod_A = l3[nmod_i][1]
-                                    nmod_B = l3[nmod_i][2]
-                                    for acl_i in range(len(l3)):
-                                        if(l3[acl_i][0] == 'acl'):
-                                            acl_A = l3[acl_i][1]
-                                            acl_B = l3[acl_i][2]
-                                            sentence_structure = "SVDOPastPart"
-                                            print(sentence_structure)
-                                            entity_1 = tokenized[nsubj_B]
-                                            entity_2 = tokenized[acl_A]
-                                            relationship = tokenized[nsubj_A]
-                                            o = []
-                                            o.append(entity_1)
-                                            o.append(entity_2)
-                                            o.append(relationship)
-                                            return o,tagged,tokenized,parsed
-                                            #entity_matrix.append(entity_1,entity_2,relationship)
-                                            #transform.SVDOPastPart(entity_1, entity_2, relationship)
-                                            goto(803)
-                                            #exit(0)
-                                    sentence_structure = "SVDOPO"
+                            return o
+        for n1 in range(len(l3)):
+                if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                    nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                    nsubj_B = l3[n1][2]  
+                    for dob in range(len(l3)):
+                        if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
+                            #no_of_dobj = 1
+                            dobj_A = l3[dob][1]
+                            dobj_D = l3[dob][2]
+                            dob = dob +1
+                            for iobj_i in range(len(l3)):
+                                if(l3[iobj_i][0] == 'iobj'):
+                                    iobj_A = l3[iobj_i][1]
+                                    iobj_B = l3[iobj_i][2]
+                                    sentence_structure ="SVIODO"
                                     print(sentence_structure)
-                                    entity_1 = tokenized[nsubj_B]
-                                    relationship = tokenized[nsubj_A]
-                                    if(tokenized[l3[case_i][2]] == "to" or "from" or "on" or "in" or "into" or "through" or "of"):
-                                        entity_2 = tokenized[case_A]
-                                    else :
-                                        entity_2 = tokenized[dobj_D]
-                                    o = []
-                                    o.append(entity_1)
-                                    o.append(entity_2)
-                                    o.append(relationship)
-                                    return o,tagged,tokenized,parsed
-                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                    #transform.SVDOPO(entity_1, entity_2, relationship)
-                                    goto(803)
-                                    #exit(0)
-                    for compound_i in range(len(l3)):
-                        if(l3[compound_i][0] == 'compound'):
-                            compound_A = l3[compound_i][1]
-                            compound_B = l3[compound_i][2]
-                            compound_i = compound_i + 1
-                            for compound_i2 in range(compound_i,len(l3)):
-                                if(l3[compound_i2][0] == 'compound'):
-                                    compound_A_2 = l3[compound_i2][1]
-                                    compound_B_2 = l3[compound_i2][2]
-                                    sentence_structure = "SVDO"
                                     entity_1 = tokenized[nsubj_B]
                                     entity_2 = tokenized[dobj_D]
                                     relationship = tokenized[nsubj_A]
@@ -534,16 +512,73 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged,tokenized,parsed
-                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                    #transform.SVDO(entity_1, entity_2, relationship)
+                                    return o
+                            for advmod_i in range(len(l3)):
+                                if(l3[advmod_i][0] == 'advmod'):
+                                    advmod_A = l3[advmod_i][1]
+                                    advmod_B = l3[advmod_i][2]
+                                    sentence_structure = "SVDOAdverbial"
                                     print(sentence_structure)
-                                    goto(803)
-                                    #exit(0)
-                            for aux_i in range(len(l3)):
-                                if(l3[aux_i][0] == 'aux'):
-                                    aux_A = l3[aux_i][1]
-                                    aux_B = l3[aux_i][2]
+                                    entity_1 = tokenized[nsubj_B]
+                                    entity_2 = tokenized[dobj_D]
+                                    relationship = tokenized[nsubj_A]
+                                    o = []
+                                    o.append(entity_1)
+                                    o.append(entity_2)
+                                    o.append(relationship)
+                                    return o
+                            for acl_i in range(len(l3)):
+                                if(l3[acl_i][0] == 'acl'):
+                                    acl_A = l3[acl_i][1]
+                                    acl_B = l3[acl_i][2]
+                                    sentence_structure = "SVDOPastPart"
+                                    print(sentence_structure)
+                                    entity_1 = tokenized[nsubj_B]
+                                    entity_2 = tokenized[acl_A]
+                                    relationship = tokenized[nsubj_A]
+                                    o = []
+                                    o.append(entity_1)
+                                    o.append(entity_2)
+                                    o.append(relationship)
+                                    return o
+                            for nmod_i in range(len(l3)):
+                                if((l3[nmod_i][0] == 'nmod') or (l3[nmod_i][0] == 'nmod:poss')):
+                                    nmod_A = l3[nmod_i][1]
+                                    nmod_B = l3[nmod_i][2]
+                                    sentence_structure = "SVDOPO"
+                                    print(sentence_structure)
+                                    entity_1 = tokenized[nsubj_B]
+                                    relationship = tokenized[nsubj_A]
+                                    entity_2 = tokenized[nmod_B]
+                                    o = []
+                                    o.append(entity_1)
+                                    o.append(entity_2)
+                                    o.append(relationship)
+                                    return o
+                            sentence_structure = "SVDO"
+                            print(sentence_structure)
+                            entity_1 = tokenized[nsubj_B]
+                            entity_2 = tokenized[dobj_D]
+                            relationship = tokenized[nsubj_A]
+                            o = []
+                            o.append(entity_1)
+                            o.append(entity_2)
+                            o.append(relationship)
+                            return o
+        for n1 in range(len(l3)):
+                if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                    nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                    nsubj_B = l3[n1][2]  
+                    for aux_i in range(len(l3)):
+                        if(l3[aux_i][0] == 'aux'):
+                            aux_A = l3[aux_i][1]
+                            aux_B = l3[aux_i][2]
+                            for dob in range(len(l3)):
+                                if(l3[dob][0] == 'dobj'):  # Rule for 1 'dobj'
+                                    #no_of_dobj = 1
+                                    dobj_A = l3[dob][1]
+                                    dobj_D = l3[dob][2]
+                                    dob = dob +1
                                     sentence_structure = "SAuxVDO"
                                     print(sentence_structure)
                                     entity_1 = tokenized[nsubj_B]
@@ -553,45 +588,33 @@ def sentence_structure_determine(sentence):
                                     o.append(entity_1)
                                     o.append(entity_2)
                                     o.append(relationship)
-                                    return o,tagged,tokenized,parsed
-                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                    #transform.SAuxVDO(entity_1, entity_2, relationship)
-                                    goto(803)
-                                    #exit(0)
-            for advmod_i in range(len(l3)):
-                if(l3[advmod_i][0] == 'advmod'):
-                    advmod_A = l3[advmod_i][1]
-                    advmod_B = l3[advmod_i][2]
-                    for advcl_i in range(len(l3)):
-                        if(l3[advcl_i][0] == 'advcl'):
-                            advcl_A = l3[advcl_i][1]
-                            advcl_B = l3[advcl_i][2]
-                            for mark_i in range(len(l3)):
-                                if(l3[mark_i][0] == 'mark'):
-                                    mark_A = l3[mark_i][1]
-                                    mark_B = l3[mark_i][2]
-                                    sentence_structure = 'SVConjToInf'
-                                    print(sentence_structure)
-                                    entity_1 = tokenized[nsubj_B]
-                                    entity_2 = tokenized[nsubj_B]
-                                    relationship = tokenized[nsubj_A]
-                                    o = []
-                                    o.append(entity_1)
-                                    o.append(entity_2)
-                                    o.append(relationship)
-                                    return o,tagged,tokenized,parsed
-                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                    #transform.SVConjToInf(entity_1, entity_2, relationship)
-                                    goto(803)
-                                    #exit(0)
-                            for n2 in range(n1,len(l3)):
-                                if(l3[n2][0] == 'nsubj'):
-                                    nsubj_2_A = l3[n2][1]
-                                    naubj_2_B = l3[n2][2]
-                                    for cop_i in range(len(l3)):
-                                        if(l3[cop_i][0] == 'cop'):
-                                            cop_A = l3[cop_i][1]
-                                            cop_B = l3[cop_i][2]
+                                    return o
+                    for advmod_i in range(len(l3)):
+                        if(l3[advmod_i][0] == 'advmod'):
+                            advmod_A = l3[advmod_i][1]
+                            advmod_B = l3[advmod_i][2]
+                            for advcl_i in range(len(l3)):
+                                if(l3[advcl_i][0] == 'advcl'):
+                                    advcl_A = l3[advcl_i][1]
+                                    advcl_B = l3[advcl_i][2]
+                                    for mark_i in range(len(l3)):
+                                        if(l3[mark_i][0] == 'mark'):
+                                            mark_A = l3[mark_i][1]
+                                            mark_B = l3[mark_i][2]
+                                            sentence_structure = 'SVConjToInf'
+                                            print(sentence_structure)
+                                            entity_1 = tokenized[nsubj_B]
+                                            entity_2 = tokenized[nsubj_B]
+                                            relationship = tokenized[nsubj_A]
+                                            o = []
+                                            o.append(entity_1)
+                                            o.append(entity_2)
+                                            o.append(relationship)
+                                            return o
+                                    for n2 in range(n1,len(l3)):
+                                        if(l3[n2][0] == 'nsubj'):
+                                            nsubj_2_A = l3[n2][1]
+                                            nsubj_2_B = l3[n2][2]
                                             sentence_structure = "SVConjClause"
                                             print(sentence_structure)
                                             entity_1 = tokenized[nsubj_B]
@@ -601,203 +624,86 @@ def sentence_structure_determine(sentence):
                                             o.append(entity_1)
                                             o.append(entity_2)
                                             o.append(relationship)
-                                            return o,tagged,tokenized,parsed
-                                            #entity_matrix.append(entity_1,entity_2,relationship)
-                                            #transform.SVConjClause(entity_1, entity_2, relationship)
-                                            goto(803)
-                                            #exit(0)
-                    for cc_i in range(len(l3)):
-                        if(l3[cc_i][0] == 'cc'):
-                            cc_A = l3[cc_i][1]
-                            cc_B = l3[cc_i][2]
-                            for conj_i in range(len(l3)):
-                                if(l3[conj_i][0] == 'conj'):
-                                    conj_A = l3[conj_i][1]
-                                    conj_B = l3[conj_i][2]
-                                    sentence_structure = 'SVAdverbialAdjunct'
-                                    print(sentence_structure)
-                                    entity_1 = tokenized[nsubj_B]
-                                    entity_2 = tokenized[nsubj_B]
-                                    relationship = tokenized[nsubj_A]
-                                    o = []
-                                    o.append(entity_1)
-                                    o.append(entity_2)
-                                    o.append(relationship)
-                                    return o,tagged,tokenized,parsed
-                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                    #transform.SVAdverbialAdjunct(entity_1, entity_2, relationship)
-                                    goto(803)
-                                    #exit(0)
-            for cop_i in range(len(l3)):
-                if(l3[cop_i][0] == 'cop'):
-                    cop_A = l3[cop_i][1]
-                    cop_B = l3[cop_i][2]
-                    for compound_i in range(len(l3)):
-                        if(l3[compound_i][0] == 'compound'):
-                            compound_A = l3[compound_i][1] 
-                            compound_B = l3[compound_i][2]
-                            for mark_i in range(len(l3)):
-                                if(l3[mark_i][0] == 'mark'):
-                                    mark_A = l3[mark_i][1]
-                                    mark_B = l3[mark_i][2]
-                                    sentence_structure = "Conditional"
-                                    print(sentence_structure)
-                                    goto(803)
-                                    #exit(0)
-                    for check in range(len(POS_tagged_list)):
-                        if(POS_tagged_list[check][0] == tokenized[cop_B]):
-                            if(POS_tagged_list[check][1] == 'JJ'):
-                                sentence_structure = "SVPredicative"
-                                print(sentence_structure)
-                                entity_1 = tokenized[nsubj_B]
-                                entity_1_attr1 = tokenized[cop_B]
-                                relationship = " "
-                                o = []
-                                o.append(entity_1)
-                                o.append(entity_2)
-                                o.append(relationship)
-                                return o,tagged,tokenized,parsed
-                                #entity_matrix.append(entity_1,entity_2,relationship)
-                                #transform.SVPredicative(entity_1, entity_1_attr1, relationship)
-                                goto(803)
-                                #exit(0)
-                            elif(POS_tagged_list[check][1] == 'NN'):
-                                sentence_structure = "SVPredicative"
-                                print(sentence_structure)
-                                entity_1 = tokenized[cop_B]
-                                entity_2 = tokenized[nsubj_B]
-                                relationship = "generalisation"
-                                o = []
-                                o.append(entity_1)
-                                o.append(entity_2)
-                                o.append(relationship)
-                                return o,tagged,tokenized,parsed
-                                #entity_matrix.append(entity_1,entity_2,relationship)
-                                #transform.SVPredicative(entity_1, entity_2, relationship)
-                                goto(803)
-                                #exit(0)
-            for case_i in range(len(l3)):
-                if(l3[case_i][0] == 'case'):
-                    case_A = l3[case_i][1]
-                    case_B = l3[case_i][2]
-                    for nmod_i in range(len(l3)):
-                        if(l3[nmod_i][0] == 'nmod'):
-                            nmod_A = l3[nmod_i][1]
-                            nmod_B = l3[nmod_i][2]
-                            for nummod_i in range(len(l3)):
-                                if(l3[nummod_i][0] == 'nummod'):
-                                    nummod_A = l3[nummod_i][1]
-                                    nummod_B = l3[nummod_i][2]
-                                    sentence_structure = "SVForComp"
-                                    print(sentence_structure)
-                                    entity_1 = tokenized[nsubj_B]
-                                    relationship = tokenized[nsubj_A]
-                                    if(tokenized[nsubj_A]==tokenized[nummod_B]):
-                                        entity_2 = tokenized[nsubj_B]
-                                    else:
-                                        entity_2 = tokenized[nummod_B]
-                                    o = []
-                                    o.append(entity_1)
-                                    o.append(entity_2)
-                                    o.append(relationship)
-                                    return o,tagged,tokenized,parsed
-                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                    #transform.SVForComp(entity_1, entity_2, relationship)
-                                    goto(803)
-                                    #exit(0)
-                            sentence_structure = "SVPO"
+                                            return o
+                            sentence_structure = 'SVAdverbialAdjunct'
                             print(sentence_structure)
                             entity_1 = tokenized[nsubj_B]
-                            entity_2 = tokenized[case_A]
+                            entity_2 = tokenized[nsubj_B]
                             relationship = tokenized[nsubj_A]
                             o = []
                             o.append(entity_1)
                             o.append(entity_2)
                             o.append(relationship)
-                            return o,tagged,tokenized,parsed
-                            #entity_matrix.append(entity_1,entity_2,relationship)
-                            #transform.SVPO(entity_1, entity_2, relationship)
-                            goto(803)
-                            #exit(0)
-            sentence_structure = "SV"
-            print(sentence_structure)
-            #entity_1 = tokenized[nsubj_B]
-            #entity_2 = tokenized[nsubj_B]
-            #relationship = tokenized[nsubj_A]
-            entity_1 = tokenized[nsubj_B]
-            for d in range(len(l3)):
-                if(l3[d][0] == 'dobj'):
-                    dobj_D = l3[d][2]
-                    entity_2 = tokenized[dobj_D]
-                    relationship = tokenized[nsubj_A]
-                    o = []
-                    o.append(entity_1)
-                    o.append(entity_2)
-                    o.append(relationship)
-                    goto(745)
-                else:
+                            return o
+                    for cop_i in range(len(l3)):
+                        if(l3[cop_i][0] == 'cop'):
+                            cop_A = l3[cop_i][1]
+                            cop_B = l3[cop_i][2]
+                            sentence_structure = "SVPredicative"
+                            print(sentence_structure)
+                            entity_1 = tokenized[cop_A]
+                            entity_2 = tokenized[nsubj_B]
+                            relationship = tokenized[cop_B]   #generalisation
+                            o = []
+                            o.append(entity_1)
+                            o.append(entity_2)
+                            o.append(relationship)
+                            return o
+        for n1 in range(len(l3)):
+                if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                    nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                    nsubj_B = l3[n1][2]  
+                    for nmod_i in range(len(l3)):
+                        if(l3[nmod_i][0] == 'nmod:poss'):    #earlier nmod:poss was nmod
+                            nmod_A = l3[nmod_i][1]
+                            nmod_B = l3[nmod_i][2]
+                            sentence_structure = "SVForComp or SVPO"
+                            print(sentence_structure)
+                            entity_1 = tokenized[nsubj_B]
+                            relationship = tokenized[nsubj_A]
+                            entity_2 = tokenized[nmod_B]
+                            o = []
+                            o.append(entity_1)
+                            o.append(entity_2)
+                            o.append(relationship)
+                            print("")
+                            return o
+        for n1 in range(len(l3)):
+                if(l3[n1][0] == 'nsubj'):      #searching for the first occurence of the 'nsubj' dependency 
+                    nsubj_A = l3[n1][1]         #storing the 1st numeric value of the 'nsubj' dependency
+                    nsubj_B = l3[n1][2]  
+                    sentence_structure = "SV"
+                    print(sentence_structure)
+                    #entity_1 = tokenized[nsubj_B]
+                    #entity_2 = tokenized[nsubj_B]
+                    #relationship = tokenized[nsubj_A]
+                    entity_1 = tokenized[nsubj_B]
                     entity_2 = entity_1
                     relationship = tokenized[nsubj_A]
                     o = []
                     o.append(entity_1)
                     o.append(entity_2)
                     o.append(relationship)
-            return o,tagged,tokenized,parsed
-            #entity_matrix.append(entity_1,entity_2,relationship)
-            #transform.SV(entity_1, entity_2, relationship)
-            goto(803)
-            #exit(0)
-    for nsubj_p in range(len(l3)):
-        if(l3[nsubj_p][0] == 'nsubjpass'):
-            nsubj_p_A = l3[nsubj_p][1]
-            nsubj_p_B = l3[nsubj_p][2]
-            for auxpass_i in range(len(l3)):
-                if(l3[auxpass_i][0] == 'auxpass'):
-                    auxpass_p_A = l3[auxpass_i][1]
-                    auxpass_p_B = l3[auxpass_i][2]
-                    for case_i in range(len(l3)):
-                        if(l3[case_i][0] == 'case'):
-                            case_A = l3[case_i][1]
-                            case_B = l3[case_i][2]
-                            for compound_i in range(len(l3)):
-                                if(l3[compound_i][0] == 'compound'):
-                                    compound_A = l3[compound_i][1]
-                                    compound_B = l3[compound_i][2]
-                                    for nmod_i in range(len(l3)):
-                                        if(l3[nmod_i][0] == 'nmod'):
-                                            nmod_A = l3[nmod_i][1]
-                                            nmod_B = l3[nmod_i][2]
-                                            for aux_i in range(len(l3)):
-                                                if(l3[aux_i][0] == 'aux'):
-                                                    aux_A = l3[aux_i][1]
-                                                    aux_B = l3[aux_i][2]
-                                                    sentence_structure = 'SAuxVPassPO'
-                                                    print(sentence_structure)
-                                                    entity_1 = tokenized[case_A]
-                                                    entity_2 = tokenized[nsubj_p_B]
-                                                    relationship = tokenized[nsubj_p_A]
-                                                    o = []
-                                                    o.append(entity_1)
-                                                    o.append(entity_2)
-                                                    o.append(relationship)
-                                                    return o,tagged,tokenized,parsed
-                                                    #entity_matrix.append(entity_1,entity_2,relationship)
-                                                    #transform.SAuxVPassPO(entity_1, entity_2, relationship)
-                                                    goto(803)
-                                                    #exit(0)
-                                            sentence_structure = 'SVPassPO'
-                                            print(sentence_structure)
-                                            entity_1 = tokenized[case_A]
-                                            entity_2 = tokenized[nsubj_p_B]
-                                            relationship = tokenized[nsubj_p_A]
-                                            o = []
-                                            o.append(entity_1)
-                                            o.append(entity_2)
-                                            o.append(relationship)
-                                            return o,tagged,tokenized,parsed
-                                            #entity_matrix.append(entity_1,entity_2,relationship)
-                                            #transform.SVPassPO(entity_1, entity_2, relationship)
-                                            goto(803)
-                                            #exit(0)
-        break
-    print(" ")
+                    print("\n")
+                    print("\n")
+                    return o
+        for nsubj_p in range(len(l3)):
+                if(l3[nsubj_p][0] == 'nsubjpass'):
+                    nsubj_p_A = l3[nsubj_p][1]
+                    nsubj_p_B = l3[nsubj_p][2]
+                    for nmod_i in range(len(l3)):
+                        if(l3[nmod_i][0] == 'nmod'):
+                            nmod_A = l3[nmod_i][1]
+                            nmod_B = l3[nmod_i][2]
+                            sentence_structure = 'SAuxVPassPO or SVPassPO'
+                            print(sentence_structure)
+                            entity_1 = tokenized[nmod_B]
+                            entity_2 = tokenized[nsubj_p_B]
+                            relationship = tokenized[nsubj_p_A]
+                            o = []
+                            o.append(entity_1)
+                            o.append(entity_2)
+                            o.append(relationship)
+                            return o
+    except:
+        pass

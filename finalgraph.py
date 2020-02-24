@@ -1,39 +1,15 @@
-import sys
+#import sys
 import joint_entity_attr_relation
 
 global l 
 global sentence_no
 sentence_no = 0
 l = []
-def goto(lineno):
-    frame = sys._getframe().f_back
-    called_from = frame
-
-    def hook(frame, event, arg):
-        if event == 'line' and frame == called_from:
-            try:
-                frame.f_lineno = lineno
-            except ValueError as e:
-                print("jump failed:", e)
-            while frame:
-                frame.f_trace = None
-                frame = frame.f_back
-            return None
-        return hook
-
-    while frame:
-        frame.f_trace = hook
-        frame = frame.f_back
-    sys.settrace(hook)
-
-#def draw(entity,attr1,attr2,attr3,attr4,attr5,attr8,attr9,para):
-
 def draw(entity,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8,attr9,para):
-    #cou = count
     global l
     global sentence_no
     sentence_no = sentence_no + 1
-    para_length = para
+    no_of_sentences = para
     l1 = attr1
     l2 = attr2
     l3 = attr3
@@ -80,60 +56,68 @@ def draw(entity,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8,attr9,para):
         del(l9)
     else:
         l.append(l9)
+    print("")
+    print("")
+    print(entity,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8,attr9,para)
+    print("")
+    print("")
+    print("PRINTING l:",end="")
     print(l)
-    length = len(l)
-    for i in range(length):
-        for j in range(i+1,length):
+    length_l = len(l)
+    for i in range(length_l):
+        for j in range(i+1,length_l):
             try :
                 if(l[i][0] == l[j][0]):
                     l[j].pop(0)
                     l[i] = l[i] + l[j]
                     del(l[j])
-                    length = length - 1
+                    length_l = length_l - 1
                     print(l)
             except:
-                if(l[length-1][0] == l[0][0]):
-                    l[length-1].pop(0)
-                    l[0] = l[0] + l[length-1]
-                    del(l[length-1])
+                if(l[length_l-1][0] == l[0][0]):
+                    l[length_l-1].pop(0)
+                    l[0] = l[0] + l[length_l-1]
+                    del(l[length_l-1])
                     print(l)
-                elif(l[length-1][0] == l[1][0]):
-                    l[length-1].pop(0)
-                    l[1] = l[1] + l[length-1]
-                    del(l[length-1])
+                elif(l[length_l-1][0] == l[1][0]):
+                    l[length_l-1].pop(0)
+                    l[1] = l[1] + l[length_l-1]
+                    del(l[length_l-1])
                     print(l)
 
                 
-    print(l)
+    print("printing l :",l)
     print(sentence_no)
-    if(len(l)==sentence_no):
-        joint_entity_attr_relation.append(e[0],e[1],e[2],l[sentence_no-1],sentence_no-1,para_length)
+    #if(len(l)==sentence_no):
+    if length_l > 0 :
+        joint_entity_attr_relation.append_only_attribute(l[sentence_no-1],sentence_no-1,no_of_sentences)
         return
         #joint_entity_attr_relation.attribute_graph(l,cou)
         #goto(100)
     else:
-        joint_entity_attr_relation.append_only_entity_relation(e[0],e[1],e[2],sentence_no-1,para_length)
+        joint_entity_attr_relation.append_only_entity_relation(e[0],e[1],e[2],sentence_no-1,no_of_sentences)
         return
     '''if not l :
-        joint_entity_attr_relation.append_only_entity_relation(e[0],e[1],e[2],sentence_no-1,para_length)
+        joint_entity_attr_relation.append_only_entity_relation(e[0],e[1],e[2],sentence_no-1,no_of_sentences)
         return
     else:
-        joint_entity_attr_relation.append(e[0],e[1],e[2],l[0],sentence_no-1,para_length)
+        joint_entity_attr_relation.append(e[0],e[1],e[2],l[0],sentence_no-1,no_of_sentences)
         return'''
 
 
 #print(l)
 #draw(['customer','withdrawal','carries'],['withdrawal','amount','withdrawalnumber'],['withdrawal','date'],['withdrawal','time'],[],[],[],['withdrawal','type'],[],[],2)
 #draw(['system','user','warns'],['system','id'],['system','modelname','modelnumber'],['system','make'],[],[],[],[],[],[],2)
+#draw(['customer','withdrawal','carries'],['withdrawal','amount','withdrawalnumber'],['withdrawal','date'],['withdrawal','time'],[],[],[],['withdrawal','type'],[],[],1)
+#draw(['customer','withdrawal','carries'],[],[],[],[],[],[],[],[],[],2)
+#draw(['system','user','warns'],[],[],[],[],[],[],[],[],[],1)
+#draw(['Professor','Student','teaches'],[],[],[],[],[],[],[],[],[],1)
+#draw(['Institute','Details','has'],['Details','Name','Address','Affiliated_to','Affiliationnumber'],[],[],[],[],[],[],[],[],1)
+#draw([],['withdrawal','amount','withdrawalnumber'],['withdrawal','date'],['withdrawal','time'],[],[],[],['withdrawal','type'],[],[],1)
 
-#draw(['customer','withdrawal','carries'],[],[],[],[],[],[],[],[],[],4)
-#draw(['system','user','warns'],[],[],[],[],[],[],[],[],[],4)
-'''draw(['Professor','Student','teaches'],[],[],[],[],[],[],[],[],[],2)
-draw(['Institute','Details','has'],['Details','Name','Address','Affiliated_to''Affiliationnumber'],[],[],[],[],[],[],[],[],4)
+'''draw(['Institute','Student','admits'],['Student','Name','Address','Enrollno'],[],[],[],[],[],[],[],[],4)
 
-draw(['Institute','Student','admits'],['Student','Name','Address','Enrollno'],[],[],[],[],[],[],[],[],4)
-
-draw(['Student','Courses','studies'],['Courses','Mathematics','TOC','Machine Learning'],[],[],[],[],[],[],[],[],4)
+draw(['Student','Courses','studies'],['Courses','Mathematics','TOC','Machine Learning'],[]';,[],[],[],[],[],[],[],4)
 draw(['Student','Books','reads'],['Books','TOC_hopcroft','OS_Tanenbaum','Booknumber'],[],[],[],[],[],[],[],[],4)'''
 #draw(['Student','Library','reads_in'],['Library','Cardnumber','Issued_on','Issued_till'],[],[],[],[],[],[],[],[],5)
 
